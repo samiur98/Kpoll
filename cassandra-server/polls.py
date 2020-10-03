@@ -14,12 +14,22 @@ def get_poll(username, title):
 
 
 # Route for adding a new poll
-@poll_api.route("/<username>/<title>", methods = ["POST"])
+@poll_api.route("/", methods = ["POST"])
 def add_poll(username, title):
     # Performs a POST request for adding a poll
-    response = jsonify("New poll successfully added!")
-    response.status_code = 201
-    return response
+    try:
+        json = request.json
+        username = json["username"]
+        title = json["title"]
+        options = json["options"]
+        votes = json["votes"]
+        response = jsonify("New poll successfully added!")
+        response.status_code = 201
+        return response
+    except (KeyError, AttributeError):
+        response = jsonify("Bad request with improper/incomplete fields")
+        response.status_code = 403
+        return response
 
 # Route for closing a particular poll
 @poll_api.route("/<username>/<title>", methods = ["PUT"])
