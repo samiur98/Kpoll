@@ -1,6 +1,7 @@
 # Import Statements
 from flask import Blueprint, request, Response, jsonify
 from werkzeug.security import generate_password_hash, check_password_hash
+from database import session
 
 # Flask Blueprint for users
 user_api = Blueprint("user_api", __name__)
@@ -15,6 +16,9 @@ def verify_user():
         password = json["password"]
         response =jsonify("User verfied")
         response.status_code = 200
+        allE = session.execute('SELECT * FROM user_by_username')
+        for users in allE:
+            print(users.username)
         return response
     except (KeyError, AttributeError):
         response = jsonify("Bad request with improper/incomplete fields")
