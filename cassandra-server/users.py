@@ -1,7 +1,8 @@
 # Import Statements
-from flask import Blueprint, request, Response, jsonify
+from flask import Blueprint, request
 from werkzeug.security import generate_password_hash, check_password_hash
 from database import session
+from util import create_response
 
 # Flask Blueprint for users
 user_api = Blueprint("user_api", __name__)
@@ -14,17 +15,19 @@ def verify_user():
         json = request.json
         username = json["username"]
         password = json["password"]
-        response =jsonify("User verfied")
-        response.status_code = 200
-        allE = session.execute('SELECT * FROM user_by_username')
-        for users in allE:
-            print(users.username)
-        return response
-    except (KeyError, AttributeError):
-        response = jsonify("Bad request with improper/incomplete fields")
-        response.status_code = 403
-        return response
+        query = "SELECT * FROM user_by_username WHERE username = '{}';".format(username)
+        result = session.execute(query)
+        for entry in result:
+            if check_password_hash(entry.password, password):
+                return create_response("User Verfied", 200)
+            else:
+                return create_response("User not verfied", 404)
+        return create_response("User not found", 404)
 
+    except (KeyError, AttributeError):
+        return create_response("Bad request with improper/incomplete fields", 403)
+    except Exception:
+        return create_response("Internal Server Error", 500)
 
 # Route for adding a particular user to the database
 @user_api.route("/add", methods = ["POST"])
@@ -33,11 +36,12 @@ def add_user():
     try:
         json = request.json
         username = json["username"]
-        password = json["password"]
-        response = jsonify("User added successfully")
-        response.status_code = 201
-        return response
+        password = generate_password_hash(json["password"])
+        query = "INSERT INTO user_by_username (id, username, password) VALUES (uuid(), '{}', '{}');".format(username, password)
+        session.execute(query)
+        return create_response("User added successfully", 201)
+        
     except (AttributeError, KeyError):
-        response = jsonify("Bad request with improper/incomplete fields")
-        response.status_code = 403
-        return response
+        return create_response("Bad request with improper/incomplete fields", 403)
+    except Exception:
+        return create_response("Internal server serror", 500)
