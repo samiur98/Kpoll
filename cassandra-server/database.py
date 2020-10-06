@@ -1,4 +1,4 @@
-from cassandra_cluster import Cluster
+from cassandra.cluster import Cluster
 
 cluster = Cluster()
 session = cluster.connect("kpoll_keyspace")
