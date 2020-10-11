@@ -16,20 +16,20 @@ def get_poll(username, title):
         return create_json_response(result)
     except IndexError:
         return create_response("Poll with username and title not found", 404)
-    except Exception as e:
-        print (e.__class__)
+    except Exception:
         return create_response("Internal Server Error", 500)
 
 # Returns a properly formated dict containing the result of a GET query
 def create_json_response(result):
     poll = result[0]
-    return {
+    body = {
         "username": poll.username,
         "title": poll.title,
         "id": poll.id,
         "options": poll.options,
         "votes": poll.votes
     }
+    return jsonify(body)
 
 
 # Route for adding a new poll
