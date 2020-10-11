@@ -24,7 +24,7 @@ def verify_user():
                 return create_response("User not verfied", 404)
         return create_response("User not found", 404)
 
-    except (KeyError, AttributeError):
+    except (KeyError, AttributeError, TypeError):
         return create_response("Bad request with improper/incomplete fields", 403)
     except Exception:
         return create_response("Internal Server Error", 500)
@@ -35,15 +35,17 @@ def add_user():
     # Performs a POST request to add a user
     try:
         json = request.json
+        print(json)
         username = json["username"]
         password = generate_password_hash(json["password"])
         if present(username):
             return create_response("User with provided username already exists", 401)
         query = "INSERT INTO user_by_username (id, username, password) VALUES (uuid(), '{}', '{}');".format(username, password)
+        print(query)
         session.execute(query)
         return create_response("User added successfully", 201)
         
-    except (AttributeError, KeyError):
+    except (AttributeError, KeyError, TypeError):
         return create_response("Bad request with improper/incomplete fields", 403)
     except Exception:
         return create_response("Internal server serror", 500)

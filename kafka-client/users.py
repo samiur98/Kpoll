@@ -8,11 +8,13 @@ def register_user(username, password):
         'password': password
     }
     response = requests.post('http://127.0.0.1:5000/users/add', 
-                        data = body)
+                        json = body)
     if response.status_code == 201:
         print("You have been Successfully Registered!")
     elif response.status_code == 403:
         print("You have not entered username and/or password correctly")
+    elif response.status_code == 401:
+        print("User with provided username already exists, please try another username")
     else:
         print("Internal server error, we could not register you, please try again later")
 
@@ -22,11 +24,14 @@ def verify_user(username, password):
         'username': username,
         'password': password
     }
-    response = requests.post('http://127.0.0.1:5000/users/add', data = body)
+    response = requests.post('http://127.0.0.1:5000/users/add', json = body)
     if response.status_code == 200:
         return True
-    elif response.status_code == 404:
+    elif response.status_code == 403:
         print("Username and/or Password was not entered correctly, please try again")
+        return False
+    elif response.status_code == 404:
+        print("User could not be verified. Either the username and/or password is incorrect")
         return False
     else:
         print("Internal server error, please try again later")

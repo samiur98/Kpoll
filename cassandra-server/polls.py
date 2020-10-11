@@ -51,7 +51,7 @@ def add_poll():
         session.execute(query)
         return create_response("Poll Successfully added", 201)
 
-    except (KeyError, AttributeError):
+    except (KeyError, AttributeError, TypeError):
         return create_response("Bad request with improper/incomplete fields", 403)
     except Exception:
         return create_response("Internal Server Error", 500)

@@ -1,3 +1,5 @@
+# Import Statements
+from users import register_user, verify_user
 
 def main():
     print_welcome_message()
@@ -8,10 +10,19 @@ def main():
         if cmd == "Q":
             print("Thank-you")
             off = True
+        elif cmd == "N":
+            register_new_user_loop()
         else:
             print("Invalid Option")
             print_options()
 
+def register_new_user_loop():
+    # Provides I/O for adding a new user and calls register_user
+    print("Please enter username")
+    username = input()
+    print("Please enter password")
+    password = input()
+    register_user(username, password)
 
 def print_welcome_message():
     # Prints Welcome message
