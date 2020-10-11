@@ -37,6 +37,8 @@ def add_user():
         json = request.json
         username = json["username"]
         password = generate_password_hash(json["password"])
+        if present(username):
+            return create_response("User with provided username already exists", 401)
         query = "INSERT INTO user_by_username (id, username, password) VALUES (uuid(), '{}', '{}');".format(username, password)
         session.execute(query)
         return create_response("User added successfully", 201)
@@ -45,3 +47,11 @@ def add_user():
         return create_response("Bad request with improper/incomplete fields", 403)
     except Exception:
         return create_response("Internal server serror", 500)
+
+# Returns True if poll with provided username and title exists, false otehrwise
+def present(username):
+    query = "SELECT * FROM user_by_username WHERE username = '{}';".format(username)
+    result = session.execute(query)
+    for a in result:
+        return True
+    return False
