@@ -42,8 +42,9 @@ def add_poll():
         title = json["title"]
         options = json["options"]
         votes = json["votes"]
+
         if present(username, title):
-            return create_response("Poll with provided username and title already exists", 403)
+            return create_response("Poll with provided username and title already exists", 401)
         
         query = "INSERT INTO poll_by_username_and_title (username, title, id, options, votes) "
         query = query + "VALUES ('{}', '{}', uuid(), {}, {});".format(username, 
@@ -58,7 +59,7 @@ def add_poll():
 
 # Returns True if poll with provided username and title exists, false otehrwise
 def present(username, title):
-    query = "SELECT * FROM polls_by_username_and_title WHERE username = '{}' AND title = '{}';".format(username, title)
+    query = "SELECT * FROM poll_by_username_and_title WHERE username = '{}' AND title = '{}';".format(username, title)
     result = session.execute(query)
     for a in result:
         return True

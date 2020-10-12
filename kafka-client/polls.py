@@ -2,9 +2,17 @@
 import requests
 import json
 
-def add_poll():
+def add_poll(username, title, options, votes):
     # Makes HTTP request to cassandra server for adding a poll
-    print("Bunnies")
+    request_string = "http://127.0.0.1:5000/polls/"
+    body = {
+        "username": username,
+        "title": title,
+        "options": options,
+        "votes": votes
+    }
+    response = requests.post(request_string, json = body)
+    return response.status_code
 
 def get_poll(username, title):
     # Makes HTTP request to cassandra server for getting a poll

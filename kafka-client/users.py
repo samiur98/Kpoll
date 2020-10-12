@@ -24,17 +24,7 @@ def verify_user(username, password):
         'username': username,
         'password': password
     }
-    response = requests.post('http://127.0.0.1:5000/users/add', json = body)
-    if response.status_code == 200:
-        return True
-    elif response.status_code == 403:
-        print("Username and/or Password was not entered correctly, please try again")
-        return False
-    elif response.status_code == 404:
-        print("User could not be verified. Either the username and/or password is incorrect")
-        return False
-    else:
-        print("Internal server error, please try again later")
-        return False
+    response = requests.post('http://127.0.0.1:5000/users/verify', json = body)
+    return response.status_code
 
         
